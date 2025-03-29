@@ -27,34 +27,6 @@ export default function LoginPage() {
   const [isFormSubmitOnce, setIsFormSubmitOnce] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-  const [isCheckingAuth, setIsCheckingAuth] = useState(true);
-
-  // Check for existing token on page load
-  useEffect(() => {
-    const checkExistingAuth = async () => {
-      try {
-        const response = await axios.get("/api/users/login");
-
-        if (response.status === 200 && response.data.accessToken) {
-          if (rememberMe) {
-            localStorage.setItem("accessToken", response.data.accessToken);
-          } else {
-            sessionStorage.setItem("accessToken", response.data.accessToken);
-          }
-
-          toast.success("Welcome back!");
-          router.push("/profile");
-        }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      } catch (error) {
-        console.log("No valid refresh token found, showing login form");
-      } finally {
-        setIsCheckingAuth(false);
-      }
-    };
-
-    checkExistingAuth();
-  }, [rememberMe, router]);
 
   // Validate form on input change
   const validateField = <T extends keyof LoginFormData>(
@@ -152,39 +124,6 @@ export default function LoginPage() {
       }
     }
   };
-
-  // Show loading state while checking auth
-  if (isCheckingAuth) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-100 via-blue-50 to-indigo-100">
-        <div className="text-center">
-          <svg
-            className="animate-spin h-10 w-10 text-indigo-600 mx-auto mb-4"
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            viewBox="0 0 24 24"
-          >
-            <circle
-              className="opacity-25"
-              cx="12"
-              cy="12"
-              r="10"
-              stroke="currentColor"
-              strokeWidth="4"
-            ></circle>
-            <path
-              className="opacity-75"
-              fill="currentColor"
-              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-            ></path>
-          </svg>
-          <p className="text-indigo-700 font-medium">
-            Checking authentication...
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   // Show normal login form if not authenticated
   return (

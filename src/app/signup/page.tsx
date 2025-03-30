@@ -108,6 +108,7 @@ export default function SignupPage() {
     }
   };
 
+  // Update the onSignUp function to show specific error messages
   const onSignUp = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     setIsFormSumbitOnce(true);
@@ -115,16 +116,25 @@ export default function SignupPage() {
     if (validateForm()) {
       setIsLoading(true);
       try {
-        await axios.post("/api/users/signup", user).then((response) => {
-          if (response.status === 201) {
-            router.push("/login");
-          }
-        });
+        const response = await axios.post("/api/users/signup", user);
 
-        toast.success("Account created successfully!");
-      } catch (error: unknown) {
+        if (response.status === 201) {
+          toast.success(
+            "Account created successfully! Please check your email to verify your account."
+          );
+          router.push("/login");
+        }
+      } catch (error: any) {
         console.error("Signup error:", error);
-        toast.error("An error occurred. Please try again.");
+
+        const errorMessage =
+          error.response?.data?.error || "An error occurred. Please try again.";
+        toast.error(errorMessage);
+
+        // Update form error if it's about an existing user
+        if (errorMessage.includes("User already exists")) {
+          setErrors((prev) => ({ ...prev, form: errorMessage }));
+        }
       } finally {
         setIsLoading(false);
       }

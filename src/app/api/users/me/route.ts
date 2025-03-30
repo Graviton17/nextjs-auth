@@ -1,7 +1,10 @@
 import { getTokenDataFromCookies } from "@/helpers/getTokenDataFromCookies";
 import { NextRequest, NextResponse } from "next/server";
 import { User } from "@/models/users.models";
+import connect from "@/dbConfig/dbConfig";
 
+
+connect();
 // Remove the default keyword
 export async function GET(request: NextRequest) {
   try {

@@ -60,6 +60,39 @@ export default function ProfilePage() {
     }
   };
 
+  const handleResendVerification = async () => {
+    try {
+      // Show loading toast
+      const loadingToast = toast.loading("Sending verification email...");
+
+      // Get current token
+      const token =
+        localStorage.getItem("accessToken") ||
+        sessionStorage.getItem("accessToken");
+
+      if (token) {
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      }
+
+      // Make API call to resend verification
+      const response = await axios.get("/api/users/resend-verification");
+
+      // Dismiss loading toast
+      toast.dismiss(loadingToast);
+
+      if (response.data.success) {
+        toast.success("Verification email sent! Please check your inbox.");
+      } else {
+        toast.error(response.data.error || "Failed to send verification email");
+      }
+    } catch (error: any) {
+      console.error("Error sending verification email:", error);
+      toast.error(
+        error.response?.data?.error || "Failed to send verification email"
+      );
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-indigo-100 via-purple-50 to-pink-100">
@@ -212,6 +245,30 @@ export default function ProfilePage() {
                 <button className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg transition duration-200">
                   Change Password
                 </button>
+
+                {/* Add verification button for unverified users */}
+                {!user?.isVerified && (
+                  <button
+                    onClick={handleResendVerification}
+                    className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition duration-200 flex items-center"
+                  >
+                    <svg
+                      className="w-5 h-5 mr-2"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      ></path>
+                    </svg>
+                    Verify Email
+                  </button>
+                )}
               </div>
             </div>
           </div>

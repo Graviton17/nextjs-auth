@@ -200,7 +200,7 @@ export default function ForgotPasswordPage() {
                   </h3>
                   <div className="mt-2 text-sm text-green-700">
                     <p>
-                      We've sent instructions to reset your password to {email}.
+                      We&apos;ve sent instructions to reset your password to {email}.
                       Please check your inbox and spam folders.
                     </p>
                   </div>

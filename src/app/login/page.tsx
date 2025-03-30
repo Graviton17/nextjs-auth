@@ -110,7 +110,6 @@ export default function LoginPage() {
 
         toast.success("Login successful!");
         router.push("/profile");
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } catch (error: any) {
         console.error("Login failed:", error);
         setErrors((prev) => ({
